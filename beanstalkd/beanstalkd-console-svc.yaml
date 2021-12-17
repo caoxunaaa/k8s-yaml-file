@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: beanstalkd-console
+  namespace: superxon
+spec:
+  selector:
+    app: beanstalkd-console
+  type: NodePort
+  ports:
+  - name: beanstalkd-console
+    port: 2080
+    targetPort: 2080
+    nodePort: 32080
+    protocol: TCP

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: user-rpc
+  namespace: superxon
+spec:
+  serviceName: user-rpc
+  replicas: 3
+  selector:
+    matchLabels:
+      app: user-rpc
+  template:
+    metadata:
+      labels:
+        app: user-rpc
+    spec:
+      containers:
+      - name: user-rpc
+        image:  caoxunaaa/k8s-user-rpc:latest
+        imagePullPolicy: Always
+        command: ["./user", "-f", "etc/user.yaml"]
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-yaml
+          mountPath: /app/etc
+      volumes:
+      - name: config-yaml
+        nfs:
+          server: 172.20.3.13
+          path: /root/SuperxonDir/rpc/user-rpc/conf

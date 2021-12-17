@@ -1,0 +1,258 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd1
+  namespace: superxon
+  labels:
+    app: etcd1
+spec:
+  ports:
+  - port: 2380
+    name: etcd-server
+    targetPort: 2380
+  - port: 2379
+    name: etcd-client
+    targetPort: 2379
+  clusterIP: None
+  selector:
+    app: etcd1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd2
+  namespace: superxon
+  labels:
+    app: etcd2
+spec:
+  ports:
+  - port: 2380
+    name: etcd-server
+    targetPort: 2380
+  - port: 2379
+    name: etcd-client
+    targetPort: 2379
+  clusterIP: None
+  selector:
+    app: etcd2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd3
+  namespace: superxon
+  labels:
+    app: etcd3
+spec:
+  ports:
+  - port: 2380
+    name: etcd-server
+    targetPort: 2380
+  - port: 2379
+    name: etcd-client
+    targetPort: 2379
+  clusterIP: None
+  selector:
+    app: etcd3
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: etcd1
+  namespace: superxon
+  labels:
+    app: etcd1
+spec:
+  serviceName: etcd1
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etcd1
+  template:
+    metadata:
+      name: etcd1
+      labels:
+        app: etcd1
+    spec:
+      volumes:
+      - name: etcd-data
+        nfs:
+          server: 172.20.3.13
+          path: /usr/local/k8s/etcd/data/v1
+      containers:
+      - name: etcd1
+        image: quay.io/coreos/etcd:v3.4.14
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 2380
+          name: peer
+        - containerPort: 2379
+          name: client
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+        volumeMounts:
+        - name: etcd-data
+          mountPath: /etcd-data
+        env: 
+        - name: host_ip
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        command: ["/bin/sh", "-c"]
+        args:
+        - /usr/local/bin/etcd
+          --name etcd_node1
+          --data-dir /etcd-data
+          --listen-client-urls http://${host_ip}:2379,http://127.0.0.1:2379
+          --advertise-client-urls http://${host_ip}:2379
+          --listen-peer-urls http://${host_ip}:2380
+          --initial-advertise-peer-urls http://${host_ip}:2380
+          --initial-cluster-token etcd-cluster-k8s
+          --initial-cluster-state new
+          --initial-cluster etcd_node1=http://etcd1:2380,etcd_node2=http://etcd2:2380,etcd_node3=http://etcd3:2380
+          --log-level info
+          --logger zap
+          --log-outputs stderr
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: etcd2
+  namespace: superxon
+  labels:
+    app: etcd2
+spec:
+  serviceName: etcd2
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etcd2
+  template:
+    metadata:
+      name: etcd2
+      labels:
+        app: etcd2
+    spec:
+      volumes:
+      - name: etcd-data
+        nfs:
+          server: 172.20.3.13
+          path: /usr/local/k8s/etcd/data/v2
+      containers:
+      - name: etcd2
+        image: quay.io/coreos/etcd:v3.4.14
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 2380
+          name: peer
+        - containerPort: 2379
+          name: client
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+        volumeMounts:
+        - name: etcd-data
+          mountPath: /etcd-data
+        env: 
+        - name: host_ip
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        command: ["/bin/sh", "-c"]
+        args:
+        - /usr/local/bin/etcd
+          --name etcd_node2
+          --data-dir /etcd-data
+          --listen-client-urls http://${host_ip}:2379,http://127.0.0.1:2379
+          --advertise-client-urls http://${host_ip}:2379
+          --listen-peer-urls http://${host_ip}:2380
+          --initial-advertise-peer-urls http://${host_ip}:2380
+          --initial-cluster-token etcd-cluster-k8s
+          --initial-cluster-state new
+          --initial-cluster etcd_node1=http://etcd1:2380,etcd_node2=http://etcd2:2380,etcd_node3=http://etcd3:2380
+          --log-level info
+          --logger zap
+          --log-outputs stderr
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: etcd3
+  namespace: superxon
+  labels:
+    app: etcd3
+spec:
+  serviceName: etcd3
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etcd3
+  template:
+    metadata:
+      name: etcd3
+      labels:
+        app: etcd3
+    spec:
+      volumes:
+      - name: etcd-data
+        nfs:
+          server: 172.20.3.13
+          path: /usr/local/k8s/etcd/data/v3
+      containers:
+      - name: etcd3
+        image: quay.io/coreos/etcd:v3.4.14
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 2380
+          name: peer
+        - containerPort: 2379
+          name: client
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+        volumeMounts:
+        - name: etcd-data
+          mountPath: /etcd-data
+        env: 
+        - name: host_ip
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        command: ["/bin/sh", "-c"]
+        args:
+        - /usr/local/bin/etcd
+          --name etcd_node3
+          --data-dir /etcd-data
+          --listen-client-urls http://${host_ip}:2379,http://127.0.0.1:2379
+          --advertise-client-urls http://${host_ip}:2379
+          --listen-peer-urls http://${host_ip}:2380
+          --initial-advertise-peer-urls http://${host_ip}:2380
+          --initial-cluster-token etcd-cluster-k8s
+          --initial-cluster-state new
+          --initial-cluster etcd_node1=http://etcd1:2380,etcd_node2=http://etcd2:2380,etcd_node3=http://etcd3:2380
+          --log-level info
+          --logger zap
+          --log-outputs stderr
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd-external
+  namespace: superxon
+spec:
+  type: NodePort
+  ports:
+  - name: client
+    port: 2379
+    targetPort: 2379
+    nodePort: 30003
+  - name: message
+    port: 2380
+    targetPort: 2380
+    nodePort: 30004
+  selector:
+    app: etcd1

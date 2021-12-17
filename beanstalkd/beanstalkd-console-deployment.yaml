@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: beanstalkd-console
+  namespace: superxon
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: beanstalkd-console
+  template:
+    metadata:
+      labels:
+        app: beanstalkd-console
+    spec:
+      containers:
+      - name: beanstalkd-console
+        image:  schickling/beanstalkd-console
+        ports:
+        - containerPort: 2080

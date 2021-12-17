@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: beanstalkd
+  namespace: superxon
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: beanstalkd
+    spec:
+      containers:
+      - name: beanstalkd
+        image:  schickling/beanstalkd
+        ports:
+        - containerPort: 11300
+

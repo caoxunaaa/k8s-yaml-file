@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-cs-1
+  namespace: superxon
+  labels:
+    app: kafka-1
+spec:
+  type: NodePort
+  ports:
+  - port: 9092
+    name: kafka-cs-1
+    targetPort: 9092
+    nodePort: 30901
+    protocol: TCP
+  selector:
+    app: kafka-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-hs-1
+  namespace: superxon
+  labels:
+    app: kafka-1
+spec:
+  ports:
+  - port: 9092
+    name: server
+  clusterIP: None
+  selector:
+    app: kafka-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-cs-2
+  namespace: superxon
+  labels:
+    app: kafka-2
+spec:
+  type: NodePort
+  ports:
+  - port: 9092
+    name: kafka-cs-2
+    targetPort: 9092
+    nodePort: 30902
+    protocol: TCP
+  selector:
+    app: kafka-2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-hs-2
+  namespace: superxon
+  labels:
+    app: kafka-2
+spec:
+  ports:
+  - port: 9092
+    name: server
+  clusterIP: None
+  selector:
+    app: kafka-2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-cs-3
+  namespace: superxon
+  labels:
+    app: kafka-3
+spec:
+  type: NodePort
+  ports:
+  - port: 9092
+    name: kafka-cs-3
+    targetPort: 9092
+    nodePort: 30903
+    protocol: TCP
+  selector:
+    app: kafka-3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-hs-3
+  namespace: superxon
+  labels:
+    app: kafka-3
+spec:
+  ports:
+  - port: 9092
+    name: server
+  clusterIP: None
+  selector:
+    app: kafka-3

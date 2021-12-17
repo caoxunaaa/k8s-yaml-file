@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-device-base-rpc
+  namespace: superxon
+  labels:
+    app: grpc-device-base-rpc
+    service: grpc-device-base-rpc
+spec:
+  ports:
+  - port: 8080
+    name: grpc-device-base-rpc-cs
+    targetPort: 8080
+  selector:
+    app: grpc-device-base-rpc

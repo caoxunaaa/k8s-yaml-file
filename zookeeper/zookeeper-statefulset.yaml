@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zookeeper-1
+  namespace: superxon
+spec:
+  serviceName: zoo1
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper-1
+      name: zookeeper-1
+  template:
+    metadata:
+      labels:
+        app: zookeeper-1
+        name: zookeeper-1
+    spec:
+      containers:
+      - name: zoo1
+        image: zookeeper
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 2181
+        env:
+        - name: ZOO_MY_ID
+          value: "1"
+        - name: ZOO_SERVERS
+          value: "server.1=0.0.0.0:2888:3888;2181 server.2=zoo2.superxon.svc.cluster.local:2888:3888;2181 server.3=zoo3.superxon.svc.cluster.local:2888:3888;2181"
+        volumeMounts:
+        - name: datadir
+          mountPath: /data
+      volumes:
+        - name: datadir
+          nfs:
+            server: 172.20.3.13
+            path: /usr/local/k8s/zk/pv01 
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zookeeper-2
+  namespace: superxon
+spec:
+  serviceName: zoo2
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper-2
+      name: zookeeper-2
+  template:
+    metadata:
+      labels:
+        app: zookeeper-2
+        name: zookeeper-2
+    spec:
+      containers:
+      - name: zoo2
+        image: zookeeper
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 2181
+        env:
+        - name: ZOO_MY_ID
+          value: "2"
+        - name: ZOO_SERVERS
+          value: "server.1=zoo1.superxon.svc.cluster.local:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3.superxon.svc.cluster.local:2888:3888;2181"
+        volumeMounts:
+        - name: datadir
+          mountPath: /data
+      volumes:
+        - name: datadir
+          nfs:
+            server: 172.20.3.13
+            path: /usr/local/k8s/zk/pv02
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zookeeper-3
+  namespace: superxon
+spec:
+  serviceName: zoo3
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper-3
+      name: zookeeper-3
+  template:
+    metadata:
+      labels:
+        app: zookeeper-3
+        name: zookeeper-3
+    spec:
+      containers:
+      - name: zoo3
+        image: zookeeper
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 2181
+        env:
+        - name: ZOO_MY_ID
+          value: "3"
+        - name: ZOO_SERVERS
+          value: "server.1=zoo1.superxon.svc.cluster.local:2888:3888;2181 server.2=zoo2.superxon.svc.cluster.local:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181"
+        volumeMounts:
+        - name: datadir
+          mountPath: /data
+      volumes:
+        - name: datadir
+          nfs:
+            server: 172.20.3.13
+            path: /usr/local/k8s/zk/pv03

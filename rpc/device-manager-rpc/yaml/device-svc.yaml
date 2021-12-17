@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-device-base-rpc-cs
+  namespace: superxon
+  labels:
+    app: grpc-device-base-rpc
+spec:
+  type: NodePort
+  ports:
+  - port: 8081 
+    name: grpc-device-base-rpc-cs
+    targetPort: 8080
+    nodePort: 30081
+    protocol: TCP
+  selector:
+    app: grpc-device-base-rpc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-device-transmit-rpc-cs
+  namespace: superxon
+  labels:
+    app: grpc-device-transmit-rpc
+spec:
+  type: NodePort
+  ports:
+  - port: 8082
+    name: grpc-device-transmit-rpc-cs
+    targetPort: 8080
+    nodePort: 30082
+    protocol: TCP
+  selector:
+    app: grpc-device-transmit-rpc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-device-repair-rpc-cs
+  namespace: superxon
+  labels:
+    app: grpc-device-repair-rpc
+spec:
+  type: NodePort
+  ports:
+  - port: 8083
+    name: grpc-device-repair-rpc-cs
+    targetPort: 8080
+    nodePort: 30083
+    protocol: TCP
+  selector:
+    app: grpc-device-repair-rpc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-device-maintenance-rpc-cs
+  namespace: superxon
+  labels:
+    app: grpc-device-maintenance-rpc
+spec:
+  type: NodePort
+  ports:
+  - port: 8084
+    name: grpc-device-maintenance-rpc-cs
+    targetPort: 8080
+    nodePort: 30084
+    protocol: TCP
+  selector:
+    app: grpc-device-maintenance-rpc

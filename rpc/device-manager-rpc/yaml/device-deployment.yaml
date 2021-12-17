@@ -1,0 +1,123 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grpc-device-base-rpc
+  namespace: superxon
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: grpc-device-base-rpc
+  template:
+    metadata:
+      labels:
+        app: grpc-device-base-rpc
+    spec:
+      containers:
+      - name: grpc-device-base-rpc
+        image:  caoxunaaa/k8s-device-base-rpc:latest
+        imagePullPolicy: Always
+        command: ["./devicebase", "-f", "etc/device-base.yaml"]
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-yaml
+          mountPath: /app/etc
+      volumes:
+      - name: config-yaml
+        nfs:
+          server: 172.20.3.13
+          path: /root/SuperxonDir/rpc/device-manager-rpc/conf
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grpc-device-transmit-rpc
+  namespace: superxon
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: grpc-device-transmit-rpc
+  template:
+    metadata:
+      labels:
+        app: grpc-device-transmit-rpc
+    spec:
+      containers:
+      - name: grpc-device-transmit-rpc
+        image:  caoxunaaa/k8s-device-transmit-rpc:latest
+        imagePullPolicy: Always
+        command: ["./devicetransmit", "-f", "etc/device-transmit.yaml"]
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-yaml
+          mountPath: /app/etc
+      volumes:
+      - name: config-yaml
+        nfs:
+          server: 172.20.3.13
+          path: /root/SuperxonDir/rpc/device-manager-rpc/conf
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grpc-device-repair-rpc
+  namespace: superxon
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: grpc-device-repair-rpc
+  template:
+    metadata:
+      labels:
+        app: grpc-device-repair-rpc
+    spec:
+      containers:
+      - name: grpc-device-repair-rpc
+        image:  caoxunaaa/k8s-device-repair-rpc:latest
+        imagePullPolicy: Always
+        command: ["./devicerepair", "-f", "etc/device-repair.yaml"]
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-yaml
+          mountPath: /app/etc
+      volumes:
+      - name: config-yaml
+        nfs:
+          server: 172.20.3.13
+          path: /root/SuperxonDir/rpc/device-manager-rpc/conf
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grpc-device-maintenance-rpc
+  namespace: superxon
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: grpc-device-maintenance-rpc
+  template:
+    metadata:
+      labels:
+        app: grpc-device-maintenance-rpc
+    spec:
+      containers:
+      - name: grpc-device-maintenance-rpc
+        image:  caoxunaaa/k8s-device-maintenance-rpc:latest
+        imagePullPolicy: Always
+        command: ["./maintenance", "-f", "etc/device-maintenance.yaml"]
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-yaml
+          mountPath: /app/etc
+      volumes:
+      - name: config-yaml
+        nfs:
+          server: 172.20.3.13
+          path: /root/SuperxonDir/rpc/device-manager-rpc/conf
